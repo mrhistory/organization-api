@@ -25,5 +25,53 @@ describe OrganizationAPI do
         zipcode: '30044',
         phone_number: '3216540987'
       })
+    @app1 = OrganizationAPI::Application.new( {
+      name: 'App1',
+      url: 'https://not-a-real-url.com',
+      icon_image_url: 'http://not-a-real-url.com/app1-icon.png'
+      })
+    @app2 = OrganizationAPI::Application.new( {
+      name: 'App2',
+      url: 'https://not-a-real-url2.com',
+      icon_image_url: 'https://not-a-real-url.com/app2-icon.png'
+      })
+  end
+
+  it 'should create and delete and organization' do
+    response = OrganizationAPI.create_organization(@org1)
+    response.name.should eq(@org1.name)
+    response = OrganizationAPI.delete_organization(response.id)
+    response.should eq(true)
+  end
+
+  it 'should return a particular organization' do
+    response = OrganizationAPI.create_organization(@org1)
+    org = OrganizationAPI.get_organization(response.id)
+    org.name.should eq(response.name)
+    OrganizationAPI.delete_organization(org.id)
+  end
+
+  it 'should return a list of organizations' do
+    OrganizationAPI.create_organization(@org1)
+    OrganizationAPI.create_organization(@org2)
+    response = OrganizationAPI.get_organizations
+    response[0].name.should eq(@org1.name)
+    OrganizationAPI.delete_organization(response[0].id)
+    OrganizationAPI.delete_organization(response[1].id)
+  end
+
+  it 'should update an organization' do
+    org = OrganizationAPI.create_organization(@org1)
+    org.name = 'New Name'
+    org = OrganizationAPI.update_organization(org)
+    org.name.should eq('New Name')
+    OrganizationAPI.delete_organization(org.id)
+  end
+
+  it 'should create and delete an application' do
+    app = OrganizationAPI.create_application(@app1)
+    app.name.should eq(@app1.name)
+    response = OrganizationAPI.delete_application(app.id)
+    response.should eq(true)
   end
 end

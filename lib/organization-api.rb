@@ -10,13 +10,61 @@ module OrganizationAPI
     @endpoint = RestClient::Resource.new(host, username, password)
   end
 
-  def self.get_users
-    response = @endpoint['users/.json'].get
-    user_list = []
-    parse_json(response.to_str).each do |user|
-      user_list << User.new(user)
+  def self.create_organization(organization)
+    response = @endpoint['organizations/.json'].post(organization.to_json)
+    Organization.new(parse_json(response.to_str))
+  rescue Exception => e
+    raise Exception, e.response if e.responds_to? response
+    raise Exception, e.message
+  end
+
+  def self.delete_organization(id)
+    response = @endpoint["organizations/#{id}.json"].delete
+    parse_json(response.to_str)[:deleted]
+  rescue Exception => e
+    raise Exception, e.response if e.responds_to? response
+    raise Exception, e.message
+  end
+
+  def self.get_organization(id)
+    response = @endpoint["organizations/#{id}.json"].get
+    Organization.new(parse_json(response.to_str))
+  rescue Exception => e
+    raise Exception, e.response if e.responds_to? response
+    raise Exception, e.message
+  end
+
+  def self.get_organizations
+    response = @endpoint['organizations/.json'].get
+    orgs = []
+    parse_json(response.to_str).each do |org|
+      orgs << Organization.new(org)
     end
-    return user_list
+    return orgs
+  rescue Exception => e
+    raise Exception, e.response if e.responds_to? response
+    raise Exception, e.message
+  end
+
+  def self.update_organization(organization)
+    response = @endpoint["organizations/#{organization.id}.json"].put(organization.to_json)
+    Organization.new(parse_json(response.to_str))
+  rescue Exception => e
+    raise Exception, e.response if e.responds_to? response
+    raise Exception, e.message
+  end
+
+  def self.create_application(application)
+    response = @endpoint['applications/.json'].post(application.to_json)
+    Application.new(parse_json(response.to_str))
+  rescue Exception => e
+    raise Exception, e.response if e.responds_to? response
+    raise Exception, e.message
+  end
+
+  def self.delete_application(id)
+    response = @endpoint["applications/#{id}.json"].delete
+    parse_json(response.to_str)[:deleted]
   rescue Exception => e
     raise Exception, e.response if e.responds_to? response
     raise Exception, e.message
