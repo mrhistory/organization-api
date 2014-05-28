@@ -32,7 +32,7 @@ module OrganizationAPI
         phone_number: @phone_number,
         admins: @admins
       }
-      hash[:applications] = get_applications_json
+      hash[:application_ids] = get_applications_json
       hash.to_json
     end
 
@@ -42,14 +42,14 @@ module OrganizationAPI
     def get_applications_json
       apps = []
       @applications.each do |app|
-        apps << app.to_json
+        apps << app.id
       end
       return apps
     end
 
     def set_applications_from_json(json)
       json.each do |app|
-        @applications << Application.new(app)
+        @applications << Application.new( { id: app })
       end
     end
   end

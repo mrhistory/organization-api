@@ -74,4 +74,40 @@ describe OrganizationAPI do
     response = OrganizationAPI.delete_application(app.id)
     response.should eq(true)
   end
+
+  it 'should return a particular application' do
+    app = OrganizationAPI.create_application(@app1)
+    response = OrganizationAPI.get_application(app.id)
+    response.name.should eq(app.name)
+    OrganizationAPI.delete_application(app.id)
+  end
+
+  it 'should return a list of applications' do
+    OrganizationAPI.create_application(@app1)
+    OrganizationAPI.create_application(@app2)
+    response = OrganizationAPI.get_applications
+    response[0].name.should eq(@app1.name)
+    OrganizationAPI.delete_application(response[0].id)
+    OrganizationAPI.delete_application(response[1].id)
+  end
+
+  it 'should update an application' do
+    app = OrganizationAPI.create_application(@app1)
+    app.name = 'New Name'
+    response = OrganizationAPI.update_application(app)
+    response.name.should eq('New Name')
+    OrganizationAPI.delete_application(response.id)
+  end
+
+  it 'should create, get, and delete an organization with an application' do
+    app = OrganizationAPI.create_application(@app1)
+    org = OrganizationAPI.create_organization(@org1)
+    org.applications << app
+    puts "\n\nAPPLICATIONS: #{org.applications.inspect}\n\n"
+    org = OrganizationAPI.update_organization(org)
+    org.applications = OrganizationAPI.get_applications_for_organization(org)
+    org.applications[0].name.should eq(app.name)
+    OrganizationAPI.delete_organization(org.id)
+    OrganizationAPI.delete_application(app.id)
+  end
 end
