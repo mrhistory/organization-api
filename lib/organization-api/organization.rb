@@ -18,7 +18,7 @@ module OrganizationAPI
       @admins = params[:admins] ||= nil
       
       @applications = []
-      set_applications_from_json(params[:applications]) unless params[:applications].nil?
+      set_applications_from_json(params[:application_ids]) unless params[:application_ids].nil?
     end
 
     def to_json
@@ -49,7 +49,7 @@ module OrganizationAPI
 
     def set_applications_from_json(json)
       json.each do |app|
-        @applications << Application.new( { id: app })
+        @applications << Application.new( { _id: app })
       end
     end
   end

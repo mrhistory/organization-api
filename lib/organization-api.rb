@@ -47,7 +47,6 @@ module OrganizationAPI
   end
 
   def self.update_organization(organization)
-    puts "\n\nORGANIZATION: #{organization.to_json}\n\n"
     response = @endpoint["organizations/#{organization.id}.json"].put(organization.to_json)
     Organization.new(parse_json(response.to_str))
   rescue Exception => e

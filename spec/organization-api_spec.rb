@@ -103,7 +103,6 @@ describe OrganizationAPI do
     app = OrganizationAPI.create_application(@app1)
     org = OrganizationAPI.create_organization(@org1)
     org.applications << app
-    puts "\n\nAPPLICATIONS: #{org.applications.inspect}\n\n"
     org = OrganizationAPI.update_organization(org)
     org.applications = OrganizationAPI.get_applications_for_organization(org)
     org.applications[0].name.should eq(app.name)
